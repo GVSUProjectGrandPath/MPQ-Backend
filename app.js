@@ -45,23 +45,15 @@ app.post('/submit-feedback', async (req, res) => {
         FeedbackID: Date.now().toString(),  // Generate unique feedback ID
         shareHabits: req.body.shareHabits,  // User's willingness to share money habits
         recommendSurvey: req.body.recommendSurvey,  // User's recommendation level
-        comfortableTalking: req.body.comfortableTalking,  // Comfort level discussing financial habits
-        engagement: req.body.engagement,  // Engagement level
         resultsAccurate: req.body.resultsAccurate,  // Accuracy of results
         resultsHelpful: req.body.resultsHelpful,  // Helpfulness of results
-        interactivity: req.body.interactivity,  // Interactivity rating
         practicalSteps: req.body.practicalSteps,  // Usefulness of practical steps
-        additionalFeatures: req.body.additionalFeatures,  // List of additional features requested
-        saveResults: req.body.saveResults,  // Interest in saving results
-        visualSatisfaction: req.body.visualSatisfaction,  // Satisfaction with visuals
         timestamp: new Date().toISOString()  // Add the current timestamp
     };
 
     // Validate the feedback data
-    if (!feedback.shareHabits || !feedback.recommendSurvey || !feedback.comfortableTalking ||
-        !feedback.engagement || !feedback.resultsAccurate || !feedback.resultsHelpful || 
-        !feedback.interactivity || !feedback.practicalSteps || 
-        !feedback.saveResults || !feedback.visualSatisfaction) {
+    if (!feedback.shareHabits || !feedback.recommendSurvey || !feedback.resultsAccurate ||
+        !feedback.resultsHelpful || !feedback.practicalSteps) {
         return res.status(400).json({ error: 'All fields are required.' });
     }
 
