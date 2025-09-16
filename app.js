@@ -1,7 +1,9 @@
 const express = require('express');
 const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
+const fs = require('fs');
 const cors = require('cors');
+const { Resend } = require('resend');
 const { v4: uuidv4 } = require('uuid'); // Import UUID library
 
 dotenv.config();  // Load environment variables from .env file
@@ -11,6 +13,10 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());  // Middleware to parse JSON requests
 app.use(cors()); // Enable CORS
+
+// app.get('/', (req, res) => {
+//   res.send('Backend is running!');
+// });
 
 // AWS configuration
 AWS.config.update({
@@ -71,7 +77,53 @@ app.post('/submit-feedback', async (req, res) => {
     }
 });
 
+const resend = new Resend(process.env.RESULTS_RESEND_API_KEY);
+
+app.post('/send-email', async (req, res) => {
+  const { emailData } = req.body;
+  // const polaroidImgSrc = emailData.polaroidAnimalimg.src;
+  console.log('Received email:', emailData.input);
+
+  if (!emailData.input) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+    // Send email using Resend
+    const response = await resend.emails.send({
+      from: '"Rep4finlit Team" <onboarding@resend.dev>', // Must be verified in Resend
+      // from: 'csgzenv@gmail.com',
+      to: emailData.input,
+      subject: 'Your Money Personality Quiz Results!',
+      html: `<h3>Hi! Your quiz results are attached below.</h3>`,
+      //`<h3>Hi! Here are your Money Personality quiz results:</h3>
+      // You are most similar to the ${emailData.mainAnimal}!<br>
+      // <img src="/MPQ-Backend/past_armadillo.png" alt="Personality Animal Image" style="width:300px;">,
+      // <br>You're percentages for each animal - <br><br>${emailData.allAnimalInfo}`
+      // <img src="${polaroidImgSrc}" alt="Personality Animal Image" style="width:300px;"`,
+
+      // attachments: [
+      //   {
+      //     filename: 'results.pdf',
+      //     content: fs.readFileSync('./resultsExample.pdf').toString('base64'),
+      //   }
+      // ]
+    });
+
+    console.log('Resend response:', response);
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
+
+  // For now, just respond with success to test frontend
+  // res.status(200).json({ message: 'Email route works!' });
+});
+
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Server running on http://localhost:${PORT}`);
+    }
 });
