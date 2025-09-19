@@ -49,17 +49,16 @@ app.post('/save-quiz-result', async (req, res) => {
 app.post('/submit-feedback', async (req, res) => {
     const feedback = {
         FeedbackID: Date.now().toString(),  // Generate unique feedback ID
-        shareHabits: req.body.shareHabits,  // User's willingness to share money habits
+        // shareHabits: req.body.shareHabits,  // User's willingness to share money habits
         recommendSurvey: req.body.recommendSurvey,  // User's recommendation level
-        resultsAccurate: req.body.resultsAccurate,  // Accuracy of results
+        // resultsAccurate: req.body.resultsAccurate,  // Accuracy of results
         resultsHelpful: req.body.resultsHelpful,  // Helpfulness of results
-        practicalSteps: req.body.practicalSteps,  // Usefulness of practical steps
+        // practicalSteps: req.body.practicalSteps,  // Usefulness of practical steps
         timestamp: new Date().toISOString()  // Add the current timestamp
     };
 
     // Validate the feedback data
-    if (!feedback.shareHabits || !feedback.recommendSurvey || !feedback.resultsAccurate ||
-        !feedback.resultsHelpful || !feedback.practicalSteps) {
+    if (!feedback.recommendSurvey || !feedback.resultsHelpful) {
         return res.status(400).json({ error: 'All fields are required.' });
     }
 
