@@ -14,19 +14,6 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());  // Middleware to parse JSON requests
 app.use(cors()); // Enable CORS
 
-// app.get('/', (req, res) => {
-//   res.send('Backend is running!');
-// });
-
-// AWS configuration
-AWS.config.update({
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY,
-    region: 'us-east-2'
-});
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
 // Route to save quiz results
 app.post('/save-quiz-result', async (req, res) => {
     const quizResult = req.body; // Get the JSON data sent in the request
@@ -45,36 +32,27 @@ app.post('/save-quiz-result', async (req, res) => {
     }
 });
 
-/// Route to submit feedback (No authentication)
+// Endpoint your frontend will call to submit feedback (No authentication)
 app.post('/submit-feedback', async (req, res) => {
-    const feedback = {
-        FeedbackID: Date.now().toString(),  // Generate unique feedback ID
-        shareHabits: req.body.shareHabits,  // User's willingness to share money habits
-        recommendSurvey: req.body.recommendSurvey,  // User's recommendation level
-        resultsAccurate: req.body.resultsAccurate,  // Accuracy of results
-        resultsHelpful: req.body.resultsHelpful,  // Helpfulness of results
-        practicalSteps: req.body.practicalSteps,  // Usefulness of practical steps
-        timestamp: new Date().toISOString()  // Add the current timestamp
-    };
+  const feedbackData = req.body;
 
-    // Validate the feedback data
-    if (!feedback.shareHabits || !feedback.recommendSurvey || !feedback.resultsAccurate ||
-        !feedback.resultsHelpful || !feedback.practicalSteps) {
-        return res.status(400).json({ error: 'All fields are required.' });
-    }
+  try {
+    // Forward the request to Google Apps Script
+    const response = await fetch('https://script.google.com/macros/s/AKfycbwt8T-qa1FrEuQARJNIeWvzIIuL7jmwl96_RUOepNev1EvYaBn98d_8WgLP5v57SzDZAg/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(feedbackData),
+    });
 
-    // Save feedback to DynamoDB
-    try {
-        await dynamodb.put({
-            TableName: 'Feedback',
-            Item: feedback,  // Make sure `feedbackId` is included in the item
-        }).promise();
+    const result = await response.json();
 
-        res.status(200).json({ message: 'Feedback submitted successfully!' });
-    } catch (error) {
-        console.error('Error submitting feedback:', error);
-        res.status(500).json({ error: 'Could not submit feedback' });
-    }
+    // Send back GAS response to frontend
+    res.json(result);
+
+  } catch (error) {
+    console.error('Error submitting feedback to GAS:', error);
+    res.status(500).json({ status: 'error', message: 'Server error submitting feedback' });
+  }
 });
 
 const resend = new Resend(process.env.RESULTS_RESEND_API_KEY);
@@ -91,8 +69,8 @@ app.post('/send-email', async (req, res) => {
   try {
     // Send email using Resend
     const response = await resend.emails.send({
-      from: '"Rep4finlit Team" <onboarding@resend.dev>', // Must be verified in Resend
-      // from: 'csgzenv@gmail.com',
+      // from: `Rep4finlit Team <onboarding@resend.dev>`, // Must be verified in Resend
+      from: `Rep4finlit Team <send@rep4finlit.org>`,
       to: emailData.input,
       subject: 'Your Money Personality Quiz Results!',
       html: `<h3>Hi! Your quiz results are attached below.</h3>`,
