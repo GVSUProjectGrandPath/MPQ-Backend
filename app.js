@@ -84,7 +84,7 @@ app.post('/send-email', async (req, res) => {
 
       attachments: [
         {
-          filename: 'results.jpg',
+          filename: emailData.animalResultFile,
           content: fs.readFileSync(imagePath).toString('base64'),
         }
       ]
