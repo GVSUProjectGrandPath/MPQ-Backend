@@ -2,6 +2,7 @@ const express = require('express');
 const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
 const fs = require('fs');
+const path = require('path');
 const cors = require('cors');
 const { Resend } = require('resend');
 const { v4: uuidv4 } = require('uuid'); // Import UUID library
@@ -59,6 +60,7 @@ const resend = new Resend(process.env.RESULTS_RESEND_API_KEY);
 
 app.post('/send-email', async (req, res) => {
   const { emailData } = req.body;
+  const imagePath = path.join(__dirname, 'animal_results', emailData.animalResultFile);
   // const polaroidImgSrc = emailData.polaroidAnimalimg.src;
   console.log('Received email:', emailData.input);
 
@@ -80,12 +82,12 @@ app.post('/send-email', async (req, res) => {
       // <br>You're percentages for each animal - <br><br>${emailData.allAnimalInfo}`
       // <img src="${polaroidImgSrc}" alt="Personality Animal Image" style="width:300px;"`,
 
-      // attachments: [
-      //   {
-      //     filename: 'results.pdf',
-      //     content: fs.readFileSync('./resultsExample.pdf').toString('base64'),
-      //   }
-      // ]
+      attachments: [
+        {
+          filename: 'results.jpg',
+          content: fs.readFileSync(imagePath).toString('base64'),
+        }
+      ]
     });
 
     console.log('Resend response:', response);
