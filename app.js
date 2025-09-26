@@ -13,7 +13,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());  // Middleware to parse JSON requests
-app.use(cors()); // Enable CORS
+app.use(cors({
+  origin: ['https://quiz.rep4finlit.org'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+})); // Enable CORS
+
+app.options('*', cors());
 
 // Route to save quiz results
 app.post('/save-quiz-result', async (req, res) => {
