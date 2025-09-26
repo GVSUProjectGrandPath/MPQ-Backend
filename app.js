@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());  // Middleware to parse JSON requests
 app.use(cors({
-  origin: ['https://quiz.rep4finlit.org'],
+  origin: ['http://127.0.0.1:5503', 'http://127.0.0.1:5501', 'https://quiz.rep4finlit.org'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 })); // Enable CORS
@@ -77,8 +77,8 @@ app.post('/send-email', async (req, res) => {
   try {
     // Send email using Resend
     const response = await resend.emails.send({
-      // from: `Rep4finlit Team <onboarding@resend.dev>`, // Must be verified in Resend
-      from: `Rep4finlit Team <send@rep4finlit.org>`,
+      from: `Rep4finlit Team <onboarding@resend.dev>`, // Must be verified in Resend
+      // from: `Rep4finlit Team <send@rep4finlit.org>`,
       to: emailData.input,
       subject: 'Your Money Personality Quiz Results!',
       html: `<h3>Hi! Your quiz results are attached below.</h3>`,
