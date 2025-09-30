@@ -22,22 +22,22 @@ app.use(cors({
 app.options('*', cors());
 
 // Route to save quiz results
-app.post('/save-quiz-result', async (req, res) => {
-    const quizResult = req.body; // Get the JSON data sent in the request
+// app.post('/save-quiz-result', async (req, res) => {
+//     const quizResult = req.body; // Get the JSON data sent in the request
     
-    // Validate and save the result in DynamoDB
-    try {
-        await dynamodb.put({
-            TableName: 'QuizResults',
-            Item: quizResult
-        }).promise();
+//     // Validate and save the result in DynamoDB
+//     try {
+//         await dynamodb.put({
+//             TableName: 'QuizResults',
+//             Item: quizResult
+//         }).promise();
 
-        res.status(200).json({ message: 'Quiz result saved successfully!' });
-    } catch (error) {
-        console.error('Error saving quiz result:', error);
-        res.status(500).json({ error: 'Could not save quiz result' });
-    }
-});
+//         res.status(200).json({ message: 'Quiz result saved successfully!' });
+//     } catch (error) {
+//         console.error('Error saving quiz result:', error);
+//         res.status(500).json({ error: 'Could not save quiz result' });
+//     }
+// });
 
 // Endpoint your frontend will call to submit feedback (No authentication)
 app.post('/submit-feedback', async (req, res) => {
@@ -97,7 +97,13 @@ app.post('/send-email', async (req, res) => {
     });
 
     console.log('Resend response:', response);
-    res.status(200).json({ message: 'Email sent successfully' });
+    // console.log(`$${response.data}`)
+    if (response.error) {
+      res.status(403).json({ error: 'Failed to send email' });
+    } else {
+      res.status(200).json({ message: 'Email sent successfully' });
+    }
+    
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).json({ error: 'Failed to send email' });
