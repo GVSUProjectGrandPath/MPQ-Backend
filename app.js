@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());  // Middleware to parse JSON requests
 app.use(cors({
-  origin: ['https://quiz.rep4finlit.org'],
+  origin: ['http://127.0.0.1:5503', 'http://127.0.0.1:5501', 'https://quiz.rep4finlit.org'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 })); // Enable CORS
@@ -22,22 +22,22 @@ app.use(cors({
 app.options('*', cors());
 
 // Route to save quiz results
-app.post('/save-quiz-result', async (req, res) => {
-    const quizResult = req.body; // Get the JSON data sent in the request
+// app.post('/save-quiz-result', async (req, res) => {
+//     const quizResult = req.body; // Get the JSON data sent in the request
     
-    // Validate and save the result in DynamoDB
-    try {
-        await dynamodb.put({
-            TableName: 'QuizResults',
-            Item: quizResult
-        }).promise();
+//     // Validate and save the result in DynamoDB
+//     try {
+//         await dynamodb.put({
+//             TableName: 'QuizResults',
+//             Item: quizResult
+//         }).promise();
 
-        res.status(200).json({ message: 'Quiz result saved successfully!' });
-    } catch (error) {
-        console.error('Error saving quiz result:', error);
-        res.status(500).json({ error: 'Could not save quiz result' });
-    }
-});
+//         res.status(200).json({ message: 'Quiz result saved successfully!' });
+//     } catch (error) {
+//         console.error('Error saving quiz result:', error);
+//         res.status(500).json({ error: 'Could not save quiz result' });
+//     }
+// });
 
 // Endpoint your frontend will call to submit feedback (No authentication)
 app.post('/submit-feedback', async (req, res) => {
@@ -77,8 +77,8 @@ app.post('/send-email', async (req, res) => {
   try {
     // Send email using Resend
     const response = await resend.emails.send({
-      // from: `Rep4finlit Team <onboarding@resend.dev>`, // Must be verified in Resend
-      from: `Rep4finlit Team <send@rep4finlit.org>`,
+      from: `Rep4finlit Team <onboarding@resend.dev>`, // Must be verified in Resend
+      // from: `Rep4finlit Team <send@rep4finlit.org>`,
       to: emailData.input,
       subject: 'Your Money Personality Quiz Results!',
       html: `<h3>Hi! Your quiz results are attached below.</h3>`,
