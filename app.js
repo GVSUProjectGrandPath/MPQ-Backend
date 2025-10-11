@@ -81,7 +81,20 @@ app.post('/send-email', async (req, res) => {
       // from: `Rep4finlit Team <send@rep4finlit.org>`,
       to: emailData.input,
       subject: 'Your Money Personality Quiz Results!',
-      html: `<h3>Hi! Your quiz results are attached below.</h3>`,
+      html: `<h3>Thank you for taking the REP4ⓇFinLit Money Mindset Quiz. 
+      You've taken the first step on your journey to financial wellness!</h3><br>
+      <div style="font-size: medium;">Next Steps:</div>
+      <ul>
+        <li style="margin-bottom: 10px;"><a href="https://www.rep4finlit.org">Join the REP4ⓇFinLit learning community</a> 
+        if you are a GVSU student</li>
+        <li style="margin-bottom: 10px;">Share the <a href="https://quiz.rep4finlit.org">Money Mindset Quiz</a> with friends and family</li>
+        <li style="margin-bottom: 10px;">Discuss your results with friends and family using
+        the free <a href="https://quiz.rep4finlit.org/src/assets/Money_Mindset_Meetup.jpg">Money Mindset Meetup worksheet</a></li>
+        <li style="margin-bottom: 10px;"><a href="https://www.rep4finlit.org">Signup</a> to stay in the loop and receive more free resources</li>
+        <li>Have ideas about how we can make a bigger impact with REP4ⓇFinLit?
+        Contact us at hello@rep4finlit.org</li>
+      </ul>
+      <br><h3>Your quiz results are attached below<h3>`,
       //`<h3>Hi! Here are your Money Personality quiz results:</h3>
       // You are most similar to the ${emailData.mainAnimal}!<br>
       // <img src="/MPQ-Backend/past_armadillo.png" alt="Personality Animal Image" style="width:300px;">,
@@ -91,6 +104,8 @@ app.post('/send-email', async (req, res) => {
       attachments: [
         {
           filename: emailData.animalResultFile,
+          type: "image/png",
+          disposition: "attachment",
           content: fs.readFileSync(imagePath).toString('base64'),
         }
       ]
