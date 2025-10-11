@@ -81,6 +81,25 @@ app.post('/send-email', async (req, res) => {
       // from: `Rep4finlit Team <send@rep4finlit.org>`,
       to: emailData.input,
       subject: 'Your Money Personality Quiz Results!',
+      replyTo: "hello@rep4finlit.org",
+      text: `
+      Thank you for taking the REP4ⓇFinLit Money Mindset Quiz.
+      You've taken the first step on your journey to financial wellness!
+
+      Next Steps:
+
+          - Join the REP4ⓇFinLit learning community if you are a GVSU student: https://www.rep4finlit.org
+
+          - Share the Money Mindset Quiz: https://quiz.rep4finlit.org
+
+          - Discuss your results with the free Money Mindset Meetup worksheet: https://quiz.rep4finlit.org/src/assets/Money_Mindset_Meetup.jpg
+
+          - Signup to receive more free resources: https://www.rep4finlit.org
+
+          - Have ideas for how we can make a bigger impact? Contact us at hello@rep4finlit.org
+
+
+      Your quiz results are attached below.`,
       html: `<h3>Thank you for taking the REP4ⓇFinLit Money Mindset Quiz. 
       You've taken the first step on your journey to financial wellness!</h3><br>
       <div style="font-size: medium;">Next Steps:</div>
@@ -95,6 +114,9 @@ app.post('/send-email', async (req, res) => {
         Contact us at hello@rep4finlit.org</li>
       </ul>
       <br><h3>Your quiz results are attached below<h3>`,
+
+
+      
       //`<h3>Hi! Here are your Money Personality quiz results:</h3>
       // You are most similar to the ${emailData.mainAnimal}!<br>
       // <img src="/MPQ-Backend/past_armadillo.png" alt="Personality Animal Image" style="width:300px;">,
