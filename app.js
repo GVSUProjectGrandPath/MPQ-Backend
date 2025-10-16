@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());  // Middleware to parse JSON requests
 app.use(cors({
-  origin: ['https://quiz.rep4finlit.org'],
+  origin: ['https://quiz.rep4finlit.org', 'http://127.0.0.1:5500'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 })); // Enable CORS
